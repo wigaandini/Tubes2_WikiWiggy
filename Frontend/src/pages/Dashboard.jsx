@@ -8,7 +8,7 @@ export default function Dashboard() {
     <div>
       <Box bgGradient="linear(to-b, white, pink.100, pink)" minHeight="185vh" pt="30px">
         <Container>
-          <img src="../../public/img/title.png" alt="Title" />
+          <img src="../../public/img/title.png" alt="Title" style={{ width: '100%', height: 'auto' }}/>
           <img src="../../public/img/ppg.png" alt="PPG" />
         </Container>
 
@@ -29,16 +29,16 @@ export default function Dashboard() {
           How does it work??
         </Heading>
 
-        <Box mx="auto" mt="120px" display="flex" alignItems="center" justifyContent="center">
+        <Box mx="auto" mt="140px" display="flex" alignItems="center" justifyContent="center">
 
           <Box textAlign="center">
-            <Button as={Link} to="/bfs-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.05)", transition: "transform 0.3s ease-in-out" }}>
+            <Button as={Link} to="/bfs-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.1)", transition: "transform 0.3s ease-in-out" }}>
               <img src={bubblesImage} alt="Bubbles" style={{ width: '50%', height: 'auto' }} />
             </Button>
           </Box>
 
           <Box textAlign="center">
-            <Button as={Link} to="/ids-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.05)", transition: "transform 0.3s ease-in-out"  }}>
+            <Button as={Link} to="/ids-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.1)", transition: "transform 0.3s ease-in-out"  }}>
               <img src={buttercupImage} alt="Buttercup" style={{ width: '50%', height: 'auto' }} />
             </Button>
           </Box>
