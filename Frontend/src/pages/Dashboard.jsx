@@ -1,45 +1,51 @@
-import { Box, Text, Container } from "@chakra-ui/react";
-import { extendTheme, ChakraProvider, GlobalStyle } from "@chakra-ui/react";
-
-import HelloGraduationSans from "../assets/HelloGraduationSans-d9enl.ttf";
-
-const theme = extendTheme({
-  fonts: {
-    body: "HelloGraduationSans",
-    heading: "HelloGraduationSans",
-  },
-});
-
+import { Heading, Container, Box, Button, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import bubblesImage from "../../public/img/bubbles.png";
+import buttercupImage from "../../public/img/buttercup.png";
 
 export default function Dashboard() {
   return (
-    <ChakraProvider theme={theme}>
-      <GlobalStyle
-        styles={{
-          "@font-face": {
-            fontFamily: "HelloGraduationSans",
-            src: `url(${HelloGraduationSans}) format("truetype")`,
-          },
-        }}
-      />
-      <Box bgGradient="linear(to-b, white, pink.100, pink)" minHeight="100vh" pt="30px">
+    <div>
+      <Box bgGradient="linear(to-b, white, pink.100, pink)" minHeight="185vh" pt="30px">
         <Container>
-          <img src="../../public/img/title.png" alt="title"></img>
-          <img src="../../public/img/ppg.png" alt="ppg"></img>
+          <img src="../../public/img/title.png" alt="Title" />
+          <img src="../../public/img/ppg.png" alt="PPG" />
         </Container>
-        <Text
-          mr="20px"
-          ml="20px"
-          mx="450px"
+
+        <Box mx="auto" mt="30px" display="flex" alignItems="center" justifyContent="center">
+          <img src="../../public/img/boxHome.png" style={{ width: '50%', height: 'auto' }} alt="Home Box" />
+        </Box>
+
+        <Heading
+          mx="auto"
+          mt="100px"
+          display="flex"
           alignItems="center"
-          textAlign="center"
-          fontFamily="body"
+          justifyContent="center"
+          color="white"
+          fontFamily={'"Century Gothic", cursive, sans-serif'}
+          textShadow="2px 2px 4px rgba(0,0,0,0.4)"
         >
-          WikiRace or Wiki Game is a game involving Wikipedia, a free online encyclopedia managed by various volunteers worldwide,
-          where players start at a Wikipedia article and must navigate through other articles on Wikipedia (by clicking on links within each article)
-          to reach another pre-determined article within the shortest time or with the fewest clicks (articles).
-        </Text>
+          How does it work??
+        </Heading>
+
+        <Box mx="auto" mt="120px" display="flex" alignItems="center" justifyContent="center">
+
+          <Box textAlign="center">
+            <Button as={Link} to="/bfs-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.05)", transition: "transform 0.3s ease-in-out" }}>
+              <img src={bubblesImage} alt="Bubbles" style={{ width: '50%', height: 'auto' }} />
+            </Button>
+          </Box>
+
+          <Box textAlign="center">
+            <Button as={Link} to="/ids-page" variant="none" _hover={{ bg: "transparent", transform: "scale(1.05)", transition: "transform 0.3s ease-in-out"  }}>
+              <img src={buttercupImage} alt="Buttercup" style={{ width: '50%', height: 'auto' }} />
+            </Button>
+          </Box>
+
+        </Box>
+
       </Box>
-    </ChakraProvider>
+    </div>
   );
 }
