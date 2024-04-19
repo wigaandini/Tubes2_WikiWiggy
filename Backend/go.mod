@@ -1,4 +1,4 @@
-module tubes2
+module getall
 
 go 1.21.4
 
