@@ -1,19 +1,19 @@
-import { Heading, Container, Box, Button, Text } from "@chakra-ui/react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-import bubblesImage from "../../public/img/bubbles.png";
-import buttercupImage from "../../public/img/buttercup.png";
+import { Heading, Container, Box, Button } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import bubblesImage from "../assets/bubbles.png";
+import buttercupImage from "../assets/buttercup.png";
 
 export default function Dashboard() {
   return (
     <div>
-      <Box bgGradient="linear(to-b, white, pink.100, pink)" minHeight="185vh" pt="30px">
+      <Box bgGradient="linear(to-b, white, #fbd7e6, #db9fb8)" minHeight="185vh" pt="30px">
         <Container>
-          <img src="../../public/img/title.png" alt="Title" style={{ width: '100%', height: 'auto' }}/>
-          <img src="../../public/img/ppg.png" alt="PPG" />
+          <img src="./img/title.png" alt="Title" style={{ width: '100%', height: 'auto' }}/>
+          <img src="./img/ppg.png" alt="PPG" />
         </Container>
 
         <Box mx="auto" mt="30px" display="flex" alignItems="center" justifyContent="center">
-          <img src="../../public/img/boxHome.png" style={{ width: '50%', height: 'auto' }} alt="Home Box" />
+          <img src="./img/boxHome.png" style={{ width: '50%', height: 'auto' }} alt="Home Box" />
         </Box>
 
         <Heading
@@ -23,7 +23,7 @@ export default function Dashboard() {
           alignItems="center"
           justifyContent="center"
           color="white"
-          fontFamily={'"Century Gothic", cursive, sans-serif'}
+          fontFamily="monospace"
           textShadow="2px 2px 4px rgba(0,0,0,0.4)"
         >
           How does it work??

@@ -1,35 +1,30 @@
-import { 
-  createBrowserRouter, 
-  createRoutesFromElements, 
-  Route, 
-  RouterProvider 
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import NavigationBar from './layouts/NavigationBar';
 
-// layouts and pages
-import RootLayout from './layouts/RootLayout'
-import Dashboard from './pages/Dashboard'
-import Create from './pages/Create'
-import Profile from './pages/Profile'
-import BFS from './pages/BFS'
-import IDS from './pages/IDS'
-
-// router and routes
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<RootLayout />}>
-      <Route index element={<Dashboard />} />
-      <Route path="create" element={<Create />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="bfs-page" element={<BFS />} />
-      <Route path="ids-page" element={<IDS />} />
-    </Route>
-  )
-)
+import RootLayout from './layouts/RootLayout';
+import Dashboard from './pages/Dashboard';
+import Create from './pages/Create';
+import Profile from './pages/Profile';
+import BFS from './pages/BFS';
+import IDS from './pages/IDS';
+import HowToUse from './pages/HowToUse';
 
 function App() {
   return (
-    <RouterProvider router={router} />
-  )
+    <Router>
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="create" element={<Create />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="bfs-page" element={<BFS />} />
+          <Route path="ids-page" element={<IDS />} />
+          <Route path="how-to-use" element={<HowToUse />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
