@@ -1,7 +1,6 @@
 package main
 
 import (
-	"container/list"
 	"fmt"
 	"log"
 	"strings"
@@ -24,55 +23,56 @@ func main() {
 	endURL := fmt.Sprintf("https://en.wikipedia.org/wiki/%s", strings.ReplaceAll(endTitle, " ", "_"))
 
 	// title = strings.Replace(title, " ", "_", -1)
-	maxDepth := 0
+	temp := 0
+	maxDepth := 4
 
 	rootNode := &Node{URL: startURL}
 
-	bfsStart := time.Now()
-	foundNode, visitedCount := bfs(rootNode, endURL)
+
+	dfsStart := time.Now()
+	path, visitedCount := iddfs(rootNode, endURL, 0, temp, []*Node{}, 0)
 	Found := false
-	if foundNode != nil {
+	if path != nil {
 		Found = false
 	}
 	for !Found {
-		maxDepth += 1
-		buildTreeFromLinks(rootNode, 0, maxDepth)
-		foundNode, visitedCount = bfs(rootNode, endURL)
-		if foundNode != nil {
-			Found = true
+		temp += 1
+		if temp <= maxDepth {
+			buildTreeFromLinks(rootNode, 0, temp)
+			path, visitedCount = iddfs(rootNode, endURL, 0, temp, []*Node{}, 0)
+			if path != nil {
+				Found = true
+			}
 		}
 	}
-	if foundNode != nil {
-		fmt.Printf("BFS Path from %s to %s:\n", startURL, endURL)
-		for i, node := range foundNode {
+	if path != nil {
+		fmt.Printf("DFS path from %s to %s:\n", startURL, endURL)
+		for i, node := range path {
 			fmt.Printf("%d. %s\n", i+1, node.URL)
 		}
 	} else {
-		fmt.Println("End page not found within the specified depth.")
+		fmt.Println("Path not found within the specified depth.")
 	}
-
-	fmt.Println("BFS Time: ", time.Since(bfsStart))
+	fmt.Println("DFS Time: ", time.Since(dfsStart))
 	fmt.Println("Visited Links Count: ", visitedCount)
 }
 
-func bfs(root *Node, endURL string) ([]*Node, int) {
-	q := list.New()
-	q.PushBack([]*Node{root})
+func iddfs(node *Node, endURL string, currentDepth, maxDepth int, currentPath []*Node, visitedCount int) ([]*Node, int) {
+	if node.URL == endURL && currentDepth <= maxDepth{
+		return append(currentPath, node), visitedCount
+	}
 
-	visitedCount := 0
-
-	for q.Len() > 0 {
-		path := q.Remove(q.Front()).([]*Node)
-		node := path[len(path)-1]
-
-		if node.URL == endURL {
-			return path, visitedCount
-		}
-
+	if currentDepth < maxDepth {
 		for _, child := range node.Nodes {
-			newPath := append(path[:len(path):len(path)], child) // Copy the path slice
-			q.PushBack(newPath)
+			if child.URL == node.URL { // Skip self link
+				continue
+			}
+			newPath := append(currentPath, node)
 			visitedCount++
+			foundPath, visitedCount := iddfs(child, endURL, currentDepth+1, maxDepth, newPath, visitedCount)
+			if len(foundPath) > 0 {
+				return foundPath, visitedCount
+			}
 		}
 	}
 
