@@ -6,6 +6,7 @@ import (
 	"time"
 	"log"
 	"strings"
+	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -121,7 +122,7 @@ func (g *Graph) depthLimitedSearch(current string, goal string, depth int, visit
 
 func main() {
 	startTitle := "Taylor Swift"
-	endTitle := "Fruit of the Loom"
+	endTitle := "Hook (music)"
 
 	startURL := convertToURL(startTitle)
 	goalURL := convertToURL(endTitle)
@@ -134,26 +135,32 @@ func main() {
 	q := list.New()
 	q.PushBack(startURL)
 
+	maxDepth := 0
+
 	for q.Len() != 0 {
 		currentURL := q.Front().Value.(string)
 		q.Remove(q.Front())
-
 		links := linkScraper(currentURL, visited)
 		for _, link := range links {
 			g.AddEdge(currentURL, link)
 			if link == goalURL {
-				path := g.IDDFS(startURL, goalURL, 3)
+				path := g.IDDFS(startURL, goalURL, maxDepth)
+				for path == nil {
+					maxDepth++
+					path = g.IDDFS(startURL, goalURL, maxDepth)
+				}
 				if path != nil {
 					fmt.Println("DFS Shortest Path:")
 					for _, node := range path {
-						fmt.Println(node)
+						title := getTitle(node)
+						fmt.Println(strings.ReplaceAll(title, "_", " "))
 					}
 					fmt.Println("Length of Path:", len(path)-1)
 					fmt.Println("Number of Articles Visited:", g.visitedCount)
 					fmt.Println("DFS Time:", time.Since(start))
 					return
 				}
-			}
+			} 
 			q.PushBack(link)
 		}
 	}
@@ -162,4 +169,21 @@ func main() {
 	fmt.Println("Length of Path: 0")
 	fmt.Println("Number of Articles Visited:", g.visitedCount)
 	fmt.Println("DFS Time:", time.Since(start))
+}
+
+func getTitle(urlString string) (string) {
+	parsedURL, err := url.Parse(urlString)
+	if err != nil {
+		return ""
+	}
+
+	pathParts := strings.Split(parsedURL.Path, "/")
+	lastPart := pathParts[len(pathParts)-1]
+
+	title, err := url.PathUnescape(lastPart)
+	if err != nil {
+		return ""
+	}
+
+	return title
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 	"log"
 	"strings"
+	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -152,7 +153,8 @@ func main() {
                 if path != nil {
                     fmt.Println("BFS Shortest Path:")
                     for _, node := range path {
-                        fmt.Println(node)
+                        title := getTitle(node)
+						fmt.Println(strings.ReplaceAll(title, "_", " "))
                     }
 					fmt.Println("Length of Path:", len(path)-1)
 					fmt.Println("Number of Articles Visited:", g.visitedCount) // Output visited count
@@ -168,4 +170,21 @@ func main() {
 	fmt.Println("Length of Path: 0")
 	fmt.Println("Number of Articles Visited:", g.visitedCount)
     fmt.Println("BFS Time:", time.Since(start))
+}
+
+func getTitle(urlString string) (string) {
+	parsedURL, err := url.Parse(urlString)
+	if err != nil {
+		return ""
+	}
+
+	pathParts := strings.Split(parsedURL.Path, "/")
+	lastPart := pathParts[len(pathParts)-1]
+
+	title, err := url.PathUnescape(lastPart)
+	if err != nil {
+		return ""
+	}
+
+	return title
 }
