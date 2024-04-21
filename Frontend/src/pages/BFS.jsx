@@ -5,7 +5,7 @@ const BFS = () => {
   return (
     <div>
       <Box bgGradient="linear(to-b, white, #cfe8fb, #8facc4)" minHeight="90vh" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-        <Container mt={20} fontFamily="monospace">
+        <Container mt={20}>
           <Flex justifyContent="center">
             <Center>
               <img 
@@ -28,7 +28,7 @@ const BFS = () => {
           </Flex>
         </Container>
 
-        <Container mt={10} mb={40}>
+        <Container mt={10} mb={40} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
               <Button bgColor="#214a6d" color="white" ml={20}> Start </Button>

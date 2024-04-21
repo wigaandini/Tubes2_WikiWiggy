@@ -5,7 +5,7 @@ const IDS = () => {
   return (
     <div>
       <Box bgGradient="linear(to-b, white, #d0e8c5, #a2b499)" minHeight="90vh" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-        <Container mt={20} fontFamily="monospace">
+        <Container mt={20}>
           <Flex justifyContent="center">
             <Center>
               <img 
@@ -28,7 +28,7 @@ const IDS = () => {
           </Flex>
         </Container>
 
-        <Container mt={10} mb={40}>
+        <Container mt={10} mb={40} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
               <Button bgColor="#465a3b" color="white" mr={20}> Start </Button>
