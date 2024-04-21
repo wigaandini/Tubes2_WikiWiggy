@@ -3,101 +3,17 @@ package main
 import (
 	"container/list"
 	"fmt"
+	"time"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-type Node struct {
-	URL   string
-	Depth int
-	Nodes []*Node
-}
 
-func main() {
-	startTitle := "Taylor Swift"
-	endTitle := "Fruit of the Loom"
-
-	startURL := fmt.Sprintf("https://en.wikipedia.org/wiki/%s", strings.ReplaceAll(startTitle, " ", "_"))
-	endURL := fmt.Sprintf("https://en.wikipedia.org/wiki/%s", strings.ReplaceAll(endTitle, " ", "_"))
-
-	// title = strings.Replace(title, " ", "_", -1)
-	maxDepth := 0
-
-	rootNode := &Node{URL: startURL}
-
-	bfsStart := time.Now()
-	foundNode, visitedCount := bfs(rootNode, endURL)
-	Found := false
-	if foundNode != nil {
-		Found = false
-	}
-	for !Found {
-		maxDepth += 1
-		buildTreeFromLinks(rootNode, 0, maxDepth)
-		foundNode, visitedCount = bfs(rootNode, endURL)
-		if foundNode != nil {
-			Found = true
-		}
-	}
-	if foundNode != nil {
-		fmt.Printf("BFS Path from %s to %s:\n", startURL, endURL)
-		for i, node := range foundNode {
-			fmt.Printf("%d. %s\n", i+1, node.URL)
-		}
-	} else {
-		fmt.Println("End page not found within the specified depth.")
-	}
-
-	fmt.Println("BFS Time: ", time.Since(bfsStart))
-	fmt.Println("Visited Links Count: ", visitedCount)
-}
-
-func bfs(root *Node, endURL string) ([]*Node, int) {
-	q := list.New()
-	q.PushBack([]*Node{root})
-
-	visitedCount := 0
-
-	for q.Len() > 0 {
-		path := q.Remove(q.Front()).([]*Node)
-		node := path[len(path)-1]
-
-		if node.URL == endURL {
-			return path, visitedCount
-		}
-
-		for _, child := range node.Nodes {
-			newPath := append(path[:len(path):len(path)], child) // Copy the path slice
-			q.PushBack(newPath)
-			visitedCount++
-		}
-	}
-
-	return nil, visitedCount
-}
-
-func linkScraper(url string) []string {
-	doc, err := goquery.NewDocument(url)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var uniqueLinks []string
-	visited := make(map[string]bool)
-
-	doc.Find("body a").Each(func(index int, item *goquery.Selection) {
-		linkTag := item
-		link, _ := linkTag.Attr("href")
-		if isValidArticleLink(link) && !visited[link] {
-			visited[link] = true
-			uniqueLinks = append(uniqueLinks, "https://en.wikipedia.org"+link)
-		}
-	})
-
-	return uniqueLinks
+// Link Scraper
+func convertToURL(title string) string {
+	return fmt.Sprintf("https://en.wikipedia.org/wiki/%s", strings.ReplaceAll(title, " ", "_"))
 }
 
 func isValidArticleLink(link string) bool {
@@ -120,15 +36,136 @@ func isValidArticleLink(link string) bool {
 	return strings.HasPrefix(link, "/wiki/") && !strings.Contains(link, ":")
 }
 
-func buildTreeFromLinks(node *Node, depth, maxDepth int) {
-	if depth >= maxDepth {
-		return
+func linkScraper(url string, visited map[string]bool) []string {
+	doc, err := goquery.NewDocument(url)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	links := linkScraper(node.URL)
-	for _, link := range links {
-		childNode := &Node{URL: link, Depth: depth + 1}
-		node.Nodes = append(node.Nodes, childNode)
-		buildTreeFromLinks(childNode, depth+1, maxDepth)
+	var uniqueLinks []string
+
+	doc.Find("body a").Each(func(index int, item *goquery.Selection) {
+		linkTag := item
+		link, _ := linkTag.Attr("href")
+		if isValidArticleLink(link) && !visited[link] {
+			visited[link] = true
+			uniqueLinks = append(uniqueLinks, "https://en.wikipedia.org"+link)
+		}
+	})
+
+	return uniqueLinks
+}
+
+
+// Graph
+type Graph struct {
+	nodes   []*Node
+	adjList map[string][]string
+	visitedCount int
+}
+
+func NewGraph() *Graph {
+	return &Graph{
+		nodes:        []*Node{},
+		adjList:      make(map[string][]string),
+		visitedCount: 0,
 	}
+}
+
+type Node struct {
+	val string
+}
+
+func (g *Graph) AddNode(value string) *Node {
+	node := &Node{val: value}
+	g.nodes = append(g.nodes, node)
+	return node
+}
+
+func (g *Graph) AddEdge(node1, node2 string) {
+	g.adjList[node1] = append(g.adjList[node1], node2)
+	g.adjList[node2] = append(g.adjList[node2], node1)
+}
+
+
+// BFS
+func (g *Graph) BFS(start, end string) []string {
+	visited := make(map[string]bool)
+	parent := make(map[string]string)
+	q := list.New()
+
+	visited[start] = true
+	q.PushBack(start)
+
+	for q.Len() != 0 {
+		currentNode := q.Front().Value.(string)
+		q.Remove(q.Front())
+
+		if currentNode == end {
+			path := []string{}
+			current := end
+			for current != "" {
+				path = append([]string{current}, path...)
+				current = parent[current]
+			}
+			return path
+		}
+
+		for _, neighbor := range g.adjList[currentNode] {
+			g.visitedCount++
+			if !visited[neighbor] {
+				visited[neighbor] = true
+				parent[neighbor] = currentNode
+				q.PushBack(neighbor)
+			}
+		}
+	}
+
+	return nil
+}
+
+// Main
+func main() {
+    startTitle := "Taylor Swift"
+	endTitle := "Fruit of the Loom"
+
+	startURL := convertToURL(startTitle)
+	goalURL := convertToURL(endTitle)
+
+    start := time.Now()
+    g := NewGraph()
+    visited := make(map[string]bool)
+
+    visited[startURL] = true
+    q := list.New()
+    q.PushBack(startURL)
+
+    for q.Len() != 0 {
+        currentURL := q.Front().Value.(string)
+        q.Remove(q.Front())
+
+        links := linkScraper(currentURL, visited)
+        for _, link := range links {
+            g.AddEdge(currentURL, link)
+            if link == goalURL {
+                path := g.BFS(startURL, goalURL)
+                if path != nil {
+                    fmt.Println("BFS Shortest Path:")
+                    for _, node := range path {
+                        fmt.Println(node)
+                    }
+					fmt.Println("Length of Path:", len(path)-1)
+					fmt.Println("Number of Articles Visited:", g.visitedCount) // Output visited count
+                    fmt.Println("BFS Time:", time.Since(start))
+                    return
+                }
+            }
+            q.PushBack(link)
+        }
+    }
+
+    fmt.Println("No path found.")
+	fmt.Println("Length of Path: 0")
+	fmt.Println("Number of Articles Visited:", g.visitedCount)
+    fmt.Println("BFS Time:", time.Since(start))
 }
