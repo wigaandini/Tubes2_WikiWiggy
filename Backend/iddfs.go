@@ -121,11 +121,14 @@ func (g *Graph) DLS(current string, goal string, depth int, visited map[string]b
 }
 
 func main() {
-	startTitle := "Taylor Swift"
-	endTitle := "Hook (music)"
+	var startTitle, goalTitle string
+	fmt.Printf("Enter the start title: ")
+	fmt.Scanln(&startTitle)
+	fmt.Printf("Enter the goal title: ")
+	fmt.Scanln(&goalTitle)
 
 	startURL := convertToURL(startTitle)
-	goalURL := convertToURL(endTitle)
+	goalURL := convertToURL(goalTitle)
 
 	start := time.Now()
 	g := NewGraph()
@@ -150,14 +153,14 @@ func main() {
 					path = g.IDS(startURL, goalURL, maxDepth)
 				}
 				if path != nil {
-					fmt.Println("DFS Shortest Path:")
+					fmt.Println("IDS Shortest Path:")
 					for _, node := range path {
 						title := getTitle(node)
 						fmt.Println(strings.ReplaceAll(title, "_", " "))
 					}
 					fmt.Println("Length of Path:", len(path)-1)
 					fmt.Println("Number of Articles Visited:", g.visitedCount)
-					fmt.Println("DFS Time:", time.Since(start))
+					fmt.Println("IDS Time:", time.Since(start))
 					return
 				}
 			} 
@@ -168,7 +171,7 @@ func main() {
 	fmt.Println("No path found.")
 	fmt.Println("Length of Path: 0")
 	fmt.Println("Number of Articles Visited:", g.visitedCount)
-	fmt.Println("DFS Time:", time.Since(start))
+	fmt.Println("IDS Time:", time.Since(start))
 }
 
 func getTitle(urlString string) (string) {

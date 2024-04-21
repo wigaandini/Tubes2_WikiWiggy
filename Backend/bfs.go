@@ -127,11 +127,14 @@ func (g *Graph) BFS(start, end string) []string {
 
 // Main
 func main() {
-    startTitle := "Taylor Swift"
-	endTitle := "Fruit of the Loom"
+	var startTitle, goalTitle string
+	fmt.Printf("Enter the start title: ")
+	fmt.Scanln(&startTitle)
+	fmt.Printf("Enter the goal title: ")
+	fmt.Scanln(&goalTitle)
 
 	startURL := convertToURL(startTitle)
-	goalURL := convertToURL(endTitle)
+	goalURL := convertToURL(goalTitle)
 
     start := time.Now()
     g := NewGraph()
