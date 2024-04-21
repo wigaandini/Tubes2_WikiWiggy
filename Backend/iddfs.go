@@ -87,13 +87,13 @@ func (g *Graph) AddEdge(node1, node2 string) {
 	g.adjList[node2] = append(g.adjList[node2], node1)
 }
 
-// IDDFS implementation
-func (g *Graph) IDDFS(startNode string, goalNode string, maxDepth int) []string {
+// IDS implementation
+func (g *Graph) IDS(startNode string, goalNode string, maxDepth int) []string {
 	g.visitedCount = 0
 
 	for depth := 0; depth <= maxDepth; depth++ {
 		visited := make(map[string]bool)
-		result := g.depthLimitedSearch(startNode, goalNode, depth, visited)
+		result := g.DLS(startNode, goalNode, depth, visited)
 		if len(result) > 0 {
 			return result
 		}
@@ -101,8 +101,8 @@ func (g *Graph) IDDFS(startNode string, goalNode string, maxDepth int) []string 
 	return nil
 }
 
-// depthLimitedSearch implementation
-func (g *Graph) depthLimitedSearch(current string, goal string, depth int, visited map[string]bool) []string {
+// DLS implementation
+func (g *Graph) DLS(current string, goal string, depth int, visited map[string]bool) []string {
 	if depth == 0 && current == goal {
 		return []string{current}
 	}
@@ -113,7 +113,7 @@ func (g *Graph) depthLimitedSearch(current string, goal string, depth int, visit
 	visited[current] = true
 	for _, neighbor := range g.adjList[current] {
 		g.visitedCount++
-		if result := g.depthLimitedSearch(neighbor, goal, depth-1, visited); result != nil {
+		if result := g.DLS(neighbor, goal, depth-1, visited); result != nil {
 			return append([]string{current}, result...)
 		}
 	}
@@ -144,10 +144,10 @@ func main() {
 		for _, link := range links {
 			g.AddEdge(currentURL, link)
 			if link == goalURL {
-				path := g.IDDFS(startURL, goalURL, maxDepth)
+				path := g.IDS(startURL, goalURL, maxDepth)
 				for path == nil {
 					maxDepth++
-					path = g.IDDFS(startURL, goalURL, maxDepth)
+					path = g.IDS(startURL, goalURL, maxDepth)
 				}
 				if path != nil {
 					fmt.Println("DFS Shortest Path:")
