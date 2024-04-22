@@ -6,19 +6,37 @@ const BFS = () => {
   const [start, setStart] = useState('');
   const [goal, setGoal] = useState('');
   const [result, setResult] = useState(null);
+  const [executionTime, setExecutionTime] = useState(null);
+  const [visitedCount, setVisitedCount] = useState(null);
+  const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // State for error handling
 
   const handleSearch = async () => {
     setLoading(true);
-    const response = await fetch(`http://localhost:8080/?src=${encodeURIComponent(start)}&dest=${encodeURIComponent(goal)}`);
-    if (response.ok) {
-      const data = await response.json();
-      setResult(data);
-    } else {
-      alert('Failed to find path.');
+    setError(null); // Reset error state before making a new request
+    try {
+      const response = await fetch(`http://localhost:8080/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.timeTaken) {
+          setResult(data.paths);
+          setExecutionTime(data.timeTaken);
+          setVisitedCount(data.visited);
+          setLength(data.length);
+        } else {
+          throw new Error('Invalid response format: timeTaken not found.');
+        }
+      } else {
+        throw new Error('Failed to fetch path. Status code: ' + response.status);
+      }
+    } catch (error) {
+      console.error('Error:', error); // Log the error to the console for debugging
+      setError('Failed to fetch data. Please try again.'); // Set error message for user display
     }
     setLoading(false);
   };
+  
 
   return (
     <div>
@@ -34,7 +52,7 @@ const BFS = () => {
             </Center>
           </Flex>
         </Container>
-
+  
         <Container mt="50px" fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
@@ -61,7 +79,7 @@ const BFS = () => {
             </Center>
           </Flex>
         </Container>
-
+  
         <Container mt={10} mb={40} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
@@ -77,6 +95,25 @@ const BFS = () => {
             </Center>
           </Flex>
         </Container>
+  
+        {result && (
+          <Container mt={5} fontFamily="monospace">
+            <Flex direction="column" align="center">
+              <Box mb={2}>
+                <b>Path:</b> {result.join(' ➡️ ')}
+              </Box>
+              <Box mb={2}>
+                <b>Time Taken:</b> {executionTime} ms
+              </Box>
+              <Box mb={2}>
+                <b>Visited:</b> {visitedCount}
+              </Box>
+              <Box mb={2}>
+                <b>Length:</b> {length}
+              </Box>
+            </Flex>
+          </Container>
+        )}
       </Box>
     </div>
   )

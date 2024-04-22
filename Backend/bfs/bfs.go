@@ -2,14 +2,15 @@ package main
 
 import (
 	"container/list"
-	"net/url"
 	"fmt"
-	"strings"
-	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
-	"github.com/gin-gonic/gin"
+	"net/url"
+	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gin-gonic/gin"
 )
 
 // Graph
@@ -122,7 +123,7 @@ func linkScraper(url string, visited map[string]bool) []string {
 	return uniqueLinks
 }
 
-func getTitle(urlString string) (string) {
+func getTitle(urlString string) string {
 	parsedURL, err := url.Parse(urlString)
 	if err != nil {
 		return ""
@@ -139,55 +140,63 @@ func getTitle(urlString string) (string) {
 	return title
 }
 
-func main (){
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Next()
+	}
+}
+
+func main() {
 	r := gin.Default()
+	r.Use(CORSMiddleware())
 
-	// Endpoint to handle GET requests with query parameters
 	r.GET("/", func(c *gin.Context) {
-		// Retrieve query parameters
-		src := c.Query("src")
-		dest := c.Query("dest")
+		startTitle := c.Query("startTitle")
+		goalTitle := c.Query("goalTitle")
 
-		// Example of validation
-		if src == "" || dest == "" {
-			// Return a Bad Request response if name parameter is missing
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Source, destination, search is required"})
+		if startTitle == "" || goalTitle == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Start title and Goal title is required"})
 			return
 		}
 
 		start := time.Now()
-			g := NewGraph()
-			visited := make(map[string]bool)
-			
-			startURL := convertToURL(src)
-			goalURL := convertToURL(dest)
-			visited[startURL] = true
-			q := list.New()
-			q.PushBack(startURL)
+		g := NewGraph()
+		visited := make(map[string]bool)
 
-			for q.Len() != 0 {
-				currentURL := q.Front().Value.(string)
-				q.Remove(q.Front())
+		startURL := convertToURL(startTitle)
+		fmt.Println(startURL)
+		goalURL := convertToURL(goalTitle)
+		visited[startURL] = true
+		q := list.New()
+		q.PushBack(startURL)
 
-				links := linkScraper(currentURL, visited)
-				for _, link := range links {
-					g.AddEdge(currentURL, link)
-					if link == goalURL {
-						path := g.BFS(startURL, goalURL)
-						if path != nil {
-							var pathTitle []string
-							for _, node := range path {
-								title := getTitle(node)
-								pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
-							}
-							endTime := time.Since(start)
-							c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken (ms)": endTime})
-							return
+		for q.Len() != 0 {
+			currentURL := q.Front().Value.(string)
+			q.Remove(q.Front())
+
+			links := linkScraper(currentURL, visited)
+			for _, link := range links {
+				g.AddEdge(currentURL, link)
+				if link == goalURL {
+					path := g.BFS(startURL, goalURL)
+					if path != nil {
+						var pathTitle []string
+						for _, node := range path {
+							title := getTitle(node)
+							pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
 						}
+						endTime := time.Since(start).Milliseconds()
+						c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
+						return
 					}
-					q.PushBack(link)
 				}
+				q.PushBack(link)
 			}
+		}
 	})
 
 	r.Run(":8080") // Listen and serve on 0.0.0.0:8080
