@@ -1,11 +1,16 @@
 package main
 
 import (
-	"net/url"
+	"container/list"
 	"fmt"
-	"strings"
-	"github.com/PuerkitoBio/goquery"
 	"log"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/gin-gonic/gin"
 )
 
 // Graph
@@ -130,4 +135,69 @@ func getTitle(urlString string) (string) {
 	}
 
 	return title
+}
+
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Next()
+	}
+}
+
+func main () {
+	r := gin.Default()
+	r.Use(CORSMiddleware())
+
+	r.GET("/", func(c *gin.Context) {
+		startTitle := c.Query("startTitle")
+		goalTitle := c.Query("goalTitle")
+
+		if startTitle == "" || goalTitle == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Start title and Goal title is required"})
+			return
+		}
+
+		start := time.Now()
+		g := NewGraph()
+
+		startURL := convertToURL(startTitle)
+		goalURL := convertToURL(goalTitle)
+
+		visited := make(map[string]bool)
+		visited[startURL] = true
+		q := list.New()
+		q.PushBack(startURL)
+
+		maxDepth := 0
+
+		for q.Len() != 0 {
+			currentURL := q.Front().Value.(string)
+			q.Remove(q.Front())
+			links := linkScraper(currentURL, visited)
+			for _, link := range links {
+				g.AddEdge(currentURL, link)
+				if link == goalURL {
+					path := g.IDS(startURL, goalURL, maxDepth)
+					for path == nil {
+						maxDepth++
+						path = g.IDS(startURL, goalURL, maxDepth)
+					}
+					var pathTitle []string
+					for _, node := range path {
+						title := getTitle(node)
+						pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
+					}
+					endTime := time.Since(start).Milliseconds()
+					c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
+					return
+				} 
+				q.PushBack(link)
+			}
+		}
+		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
+	})
+	r.Run(":8080") 
 }

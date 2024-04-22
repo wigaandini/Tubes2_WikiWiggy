@@ -199,5 +199,5 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
 	})
 
-	r.Run(":8080")
+	r.Run(":8080") 
 }
