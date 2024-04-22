@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Container, Input, Button, Flex, Center } from '@chakra-ui/react';
 import bfsImg from '../assets/bfs.png';
 
@@ -36,7 +36,8 @@ const BFS = () => {
     }
     setLoading(false);
   };
-  
+
+  const getWikipediaLink = (title) => `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
 
   return (
     <div>
@@ -88,7 +89,7 @@ const BFS = () => {
           </Flex>
         </Container>
   
-        <Container mt={10} mb={40} fontFamily="monospace">
+        <Container mt={10} mb={20} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
               <Button 
@@ -108,10 +109,33 @@ const BFS = () => {
           <Container mt={5} fontFamily="monospace" fontSize={20}>
             <Flex direction="column" align="center">
               <Box mb={2}>
-                Found path with length <b> {length} </b> from <b> {start} </b> to <b> {goal} </b> : 
+                Found path with length <b> {length} </b> from {' '} <b>
+                <a href={getWikipediaLink(start)} style={{ textDecoration: 'underline', color: 'inherit' }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                    {start}
+                  </span>
+                </a> {' '} </b>
+                to {' '} <b>
+                <a href={getWikipediaLink(goal)} style={{ textDecoration: 'underline', color: 'inherit' }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                    {goal}
+                  </span>
+                </a> </b>
+                using BFS : 
               </Box>
               <Box mb={2}>
-                <b> {result.join(' --> ')} </b>
+                <b>
+                  {result.map((article, index) => (
+                    <span key={index}>
+                      <a href={getWikipediaLink(article)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                          {article}
+                        </span>
+                      </a>
+                      {index !== result.length - 1 && ' --> '}
+                    </span>
+                  ))}
+                </b>
               </Box>
               <Box mb={2}>
                 in <b> {executionTime} ms </b>

@@ -14,9 +14,9 @@ const IDS = () => {
 
   const handleSearch = async () => {
     setLoading(true);
-    setError(null); // Reset error state before making a new request
+    setError(null);
     try {
-      const response = await fetch(`http://localhost:8080/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
+      const response = await fetch(`http://localhost:8081/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
       if (response.ok) {
         const data = await response.json();
         if (data.timeTaken) {
@@ -31,11 +31,14 @@ const IDS = () => {
         throw new Error('Failed to fetch path. Status code: ' + response.status);
       }
     } catch (error) {
-      console.error('Error:', error); // Log the error to the console for debugging
-      setError('Failed to fetch data. Please try again.'); // Set error message for user display
+      console.error('Error:', error);
+      setError('Failed to fetch data. Please try again.');
     }
     setLoading(false);
   };
+
+  const getWikipediaLink = (title) => `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+
 
   return (
     <div>
@@ -70,14 +73,38 @@ const IDS = () => {
             </Center>
           </Flex>
         </Container>
+        
         {result && (
-          <Container mt={5} fontFamily="monospace">
+          <Container mt={5} fontFamily="monospace" fontSize={20}>
             <Flex direction="column" align="center">
               <Box mb={2}>
-                Found path with length <b> {length} </b> from <b> {start} </b> to <b> {goal} </b> : 
+                Found path with length <b> {length} </b> from {' '} <b>
+                <a href={getWikipediaLink(start)} style={{ textDecoration: 'underline', color: 'inherit' }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                    {start}
+                  </span>
+                </a> {' '} </b>
+                to {' '} <b>
+                <a href={getWikipediaLink(goal)} style={{ textDecoration: 'underline', color: 'inherit' }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                    {goal}
+                  </span>
+                </a> </b>
+                using IDS : 
               </Box>
               <Box mb={2}>
-                <b> {result.join(' --> ')} </b>
+                <b>
+                  {result.map((article, index) => (
+                    <span key={index}>
+                      <a href={getWikipediaLink(article)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                          {article}
+                        </span>
+                      </a>
+                      {index !== result.length - 1 && ' --> '}
+                    </span>
+                  ))}
+                </b>
               </Box>
               <Box mb={2}>
                 in <b> {executionTime} ms </b>
