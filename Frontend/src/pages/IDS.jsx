@@ -74,16 +74,16 @@ const IDS = () => {
           <Container mt={5} fontFamily="monospace">
             <Flex direction="column" align="center">
               <Box mb={2}>
-                <b>Path:</b> {result.join(' ➡️ ')}
+                Found path with length <b> {length} </b> from <b> {start} </b> to <b> {goal} </b> : 
               </Box>
               <Box mb={2}>
-                <b>Time Taken:</b> {executionTime} ms
+                <b> {result.join(' --> ')} </b>
               </Box>
               <Box mb={2}>
-                <b>Visited:</b> {visitedCount}
+                in <b> {executionTime} ms </b>
               </Box>
-              <Box mb={2}>
-                <b>Length:</b> {length}
+              <Box mb={10}>
+                With total <b> {visitedCount}  </b> articles visited.
               </Box>
             </Flex>
           </Container>
