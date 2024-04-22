@@ -1,13 +1,75 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"strings"
 	"net/url"
-
+	"fmt"
+	"strings"
 	"github.com/PuerkitoBio/goquery"
+	"log"
 )
+
+// Graph
+type Graph struct {
+	nodes        []*Node
+	adjList      map[string][]string
+	visitedCount int
+}
+
+func NewGraph() *Graph {
+	return &Graph{
+		nodes:        []*Node{},
+		adjList:      make(map[string][]string),
+		visitedCount: 0,
+	}
+}
+
+type Node struct {
+	val string
+}
+
+func (g *Graph) AddNode(value string) *Node {
+	node := &Node{val: value}
+	g.nodes = append(g.nodes, node)
+	return node
+}
+
+func (g *Graph) AddEdge(node1, node2 string) {
+	g.adjList[node1] = append(g.adjList[node1], node2)
+	g.adjList[node2] = append(g.adjList[node2], node1)
+}
+
+// IDS implementation
+func (g *Graph) IDS(startNode string, goalNode string, maxDepth int) []string {
+	g.visitedCount = 0
+
+	for depth := 0; depth <= maxDepth; depth++ {
+		visited := make(map[string]bool)
+		result := g.DLS(startNode, goalNode, depth, visited)
+		if len(result) > 0 {
+			return result
+		}
+	}
+	return nil
+}
+
+// DLS implementation
+func (g *Graph) DLS(current string, goal string, depth int, visited map[string]bool) []string {
+	if depth == 0 && current == goal {
+		return []string{current}
+	}
+	if depth <= 0 || visited[current] {
+		return nil
+	}
+
+	visited[current] = true
+	for _, neighbor := range g.adjList[current] {
+		g.visitedCount++
+		if result := g.DLS(neighbor, goal, depth-1, visited); result != nil {
+			return append([]string{current}, result...)
+		}
+	}
+	return nil
+}
 
 func convertToURL(title string) string {
 	return fmt.Sprintf("https://en.wikipedia.org/wiki/%s", strings.ReplaceAll(title, " ", "_"))
