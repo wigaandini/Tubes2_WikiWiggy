@@ -25,7 +25,7 @@ const BFS = () => {
           setVisitedCount(data.visited);
           setLength(data.length);
         } else {
-          throw new Error('Invalid response format: timeTaken not found.');
+          throw new Error('Invalid response format. Attribute is missing');
         }
       } else {
         throw new Error('Failed to fetch path. Status code: ' + response.status);
@@ -40,7 +40,15 @@ const BFS = () => {
 
   return (
     <div>
-      <Box bgGradient="linear(to-b, white, #cfe8fb, #8facc4)" minHeight="90vh" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+      <Box 
+        bgGradient="linear(to-b, white, #cfe8fb, #8facc4)" 
+        minHeight="90vh" 
+        display="flex" 
+        flexDirection="column" 
+        alignItems="center" 
+        justifyContent="center"
+      >
+        
         <Container mt={20}>
           <Flex justifyContent="center">
             <Center>
@@ -97,19 +105,19 @@ const BFS = () => {
         </Container>
   
         {result && (
-          <Container mt={5} fontFamily="monospace">
+          <Container mt={5} fontFamily="monospace" fontSize={20}>
             <Flex direction="column" align="center">
               <Box mb={2}>
-                <b>Path:</b> {result.join(' --> ')}
+                Found path with length <b> {length} </b> from <b> {start} </b> to <b> {goal} </b> : 
               </Box>
               <Box mb={2}>
-                <b>Time Taken:</b> {executionTime} ms
+                <b> {result.join(' --> ')} </b>
               </Box>
               <Box mb={2}>
-                <b>Visited:</b> {visitedCount}
+                in <b> {executionTime} ms </b>
               </Box>
-              <Box mb={2}>
-                <b>Length:</b> {length}
+              <Box mb={10}>
+                With total <b> {visitedCount}  </b> articles visited.
               </Box>
             </Flex>
           </Container>

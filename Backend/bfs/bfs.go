@@ -168,7 +168,6 @@ func main() {
 		visited := make(map[string]bool)
 
 		startURL := convertToURL(startTitle)
-		fmt.Println(startURL)
 		goalURL := convertToURL(goalTitle)
 		visited[startURL] = true
 		q := list.New()
@@ -197,6 +196,7 @@ func main() {
 				q.PushBack(link)
 			}
 		}
+		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
 	})
 
 	r.Run(":8080")
