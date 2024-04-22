@@ -72,3 +72,5 @@ This project has been completed and can be executed.
 | :------: | :------------------------------------: |
 | 13522053 |       Erdianti Wiga Putri Andini       |
 | 13522063 |         Shazya Audrea Taufik           |
+| 10023634 |            Yudi Kurniawan              |
+
