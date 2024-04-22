@@ -1,4 +1,4 @@
-<h1 align="center"> Tugas Besar 1 IF2211 Strategi Algoritma </h1>
+<h1 align="center"> Tugas Besar 2 IF2211 Strategi Algoritma </h1>
 <h1 align="center">  Pemanfaatan Algoritma IDS dan BFS dalam Permainan WikiRace </h1>
 
 
@@ -45,7 +45,8 @@ Features that used in this program are:
 1. Open a new terminal
 2. Change the directory using `cd Backend`.
 3. If you don't have the requirements, type `go get github.com/PuerkitoBio/goquery` and  `go get github.com/gin-gonic/gin` in terminal.
-4. If you want to run the BFS algorithm, type `cd bfs` then `go run ./ids.go`. If you want to run the BFS algorithm, type `cd bfs` then `go run ./bfs.go`.
+4. To run BFS algorithm, type `cd bfs` then `go run ./bfs.go`.
+5. To run IDS algorithm, open new terminal then type `cd ids` then `go run ./ids.go`.
 ### How to use the Website
 1. Open the home page and click BFS or IDS.
 2. Input the start article title.
