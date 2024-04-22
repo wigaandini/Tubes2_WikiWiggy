@@ -32,7 +32,9 @@ Features that used in this program are:
 ## How to Run The Program
 1. Clone this repository by typing `git clone https://github.com/wigaandini/Tubes2_WikiWiggy.git` in the terminal.
 2. Change the directory using `cd Frontend`.
-3. Compile and run the program by typing `npm run dev`.
+3. If you don't have the requirements, type `npm install` in terminal.
+4. Install the ChakraUI by typing `npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion`.
+5. Compile and run the program by typing `npm run dev`.
 
 
 ## Project Status
