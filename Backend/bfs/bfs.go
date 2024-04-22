@@ -197,7 +197,8 @@ func main() {
 				q.PushBack(link)
 			}
 		}
+		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
 	})
 
-	r.Run(":8080") // Listen and serve on 0.0.0.0:8080
+	r.Run(":8080") 
 }

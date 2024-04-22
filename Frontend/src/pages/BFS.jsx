@@ -25,7 +25,7 @@ const BFS = () => {
           setVisitedCount(data.visited);
           setLength(data.length);
         } else {
-          throw new Error('Invalid response format: timeTaken not found.');
+          throw new Error('Invalid response format: Attribute is missing');
         }
       } else {
         throw new Error('Failed to fetch path. Status code: ' + response.status);
