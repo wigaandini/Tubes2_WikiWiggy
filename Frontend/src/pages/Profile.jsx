@@ -1,7 +1,8 @@
 import { Box, Container, Flex, Center } from "@chakra-ui/react";
 import wImg from "../assets/wiga.png";
 import zImg from "../assets/zya.png";
-import title2 from "../assets/title3.png";
+import yImg from "../assets/yudi.png";
+import title from "../assets/title.png";
 import "../styles/Profile.css";
 
 const Profile = () => {
@@ -19,7 +20,7 @@ const Profile = () => {
         <Flex justifyContent="center">
           <Center>
             <img
-              src={title2}
+              src={title}
               alt="Title"
               style={{ width: "100%", height: "auto" }}
             />
@@ -32,16 +33,23 @@ const Profile = () => {
         <Flex justifyContent="center">
           <Center>
             <img
-              src={wImg}
-              alt="wiga"
+              src={zImg}
+              alt="zya"
               className="shake1-animation"
               style={{ width: "60%", height: "auto", marginRight: "100px" }}
             />
 
             <img
-              src={zImg}
-              alt="zya"
+              src={wImg}
+              alt="wiga"
               className="shake2-animation"
+              style={{ width: "60%", height: "auto", marginRight: "100px", marginLeft: "100px" }}
+            />
+
+            <img
+              src={yImg}
+              alt="yudi"
+              className="shake3-animation"
               style={{ width: "60%", height: "auto", marginLeft: "100px" }}
             />
           </Center>
