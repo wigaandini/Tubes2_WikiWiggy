@@ -94,6 +94,7 @@ func isValidArticleLink(link string) bool {
 		"/wiki/Category:",
 		"/wiki/Help:",
 		"/wiki/Template:",
+		"/wiki/Main_Page",
 	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(link, prefix) {
@@ -112,12 +113,22 @@ func linkScraper(url string, visited map[string]bool) []string {
 	var uniqueLinks []string
 
 	doc.Find("body a").Each(func(index int, item *goquery.Selection) {
-		linkTag := item
-		link, _ := linkTag.Attr("href")
-		if isValidArticleLink(link) && !visited[link] {
-			visited[link] = true
-			uniqueLinks = append(uniqueLinks, "https://en.wikipedia.org"+link)
+		style, exists := item.Attr("style")
+		if exists && (strings.Contains(style, "display: none") || strings.Contains(style, "visibility: hidden")) {
+			return 
 		}
+
+		if _, hiddenExists := item.Attr("hidden"); hiddenExists {
+			return 
+		}
+
+		link, exists := item.Attr("href")
+		if !exists || !isValidArticleLink(link) || visited[link] {
+			return 
+		}
+
+		visited[link] = true
+		uniqueLinks = append(uniqueLinks, "https://en.wikipedia.org"+link)
 	})
 
 	return uniqueLinks
