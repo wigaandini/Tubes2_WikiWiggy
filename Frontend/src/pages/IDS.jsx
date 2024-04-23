@@ -58,15 +58,31 @@ const IDS = () => {
         <Container mt="50px" fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
-              <Input value={start} onChange={(e) => setStart(e.target.value)} placeholder="Enter the start article" mr={5} borderColor="#465a3b" borderWidth="2px" width="300px" />
+              <Input 
+                value={start} 
+                onChange={(e) => setStart(e.target.value)} 
+                placeholder="Enter the start article" 
+                mr={8} 
+                borderColor="#465a3b" 
+                borderWidth="2px" 
+                width="300px" 
+              />
             </Center>
             <Center>
-              <Input value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Enter the goal article" mr={20} borderColor="#465a3b" borderWidth="2px" width="300px" />
+              <Input 
+                value={goal} 
+                onChange={(e) => setGoal(e.target.value)} 
+                placeholder="Enter the goal article" 
+                // mr={20} 
+                borderColor="#465a3b" 
+                borderWidth="2px" 
+                width="300px" 
+              />
             </Center>
           </Flex>
         </Container>
 
-        <Container mt={10} mb={40} fontFamily="monospace">
+        <Container mt={10} mb={10} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
               <Button onClick={handleSearch} isLoading={loading} bgColor="#465a3b" color="white" mr={20}> Start </Button>
@@ -80,13 +96,17 @@ const IDS = () => {
               <Box mb={2}>
                 Found path with length <b> {length} </b> from {' '} <b>
                 <a href={getWikipediaLink(start)} style={{ textDecoration: 'underline', color: 'inherit' }}>
-                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#76856f'; }} 
+                    onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                  >
                     {start}
                   </span>
                 </a> {' '} </b>
                 to {' '} <b>
                 <a href={getWikipediaLink(goal)} style={{ textDecoration: 'underline', color: 'inherit' }}>
-                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#76856f'; }} 
+                    onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                  >
                     {goal}
                   </span>
                 </a> </b>
@@ -97,7 +117,9 @@ const IDS = () => {
                   {result.map((article, index) => (
                     <span key={index}>
                       <a href={getWikipediaLink(article)} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#8CA681'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#76856f'; }}
+                        onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                      >
                           {article}
                         </span>
                       </a>

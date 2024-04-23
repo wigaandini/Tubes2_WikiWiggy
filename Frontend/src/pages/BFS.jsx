@@ -69,8 +69,8 @@ const BFS = () => {
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
                 placeholder="Enter the start article" 
-                ml={20} 
-                mr={5} 
+                // ml={20} 
+                mr={8} 
                 borderColor="#214a6d" 
                 borderWidth="2px" 
                 width="300px" 
@@ -89,7 +89,7 @@ const BFS = () => {
           </Flex>
         </Container>
   
-        <Container mt={10} mb={20} fontFamily="monospace">
+        <Container mt={10} mb={10} fontFamily="monospace">
           <Flex justifyContent="center">
             <Center>
               <Button 
@@ -97,7 +97,7 @@ const BFS = () => {
                 isLoading={loading}
                 bgColor="#214a6d" 
                 color="white" 
-                ml={20}
+                // ml={20}
               > 
                 Start 
               </Button>
@@ -111,13 +111,17 @@ const BFS = () => {
               <Box mb={2}>
                 Found path with length <b> {length} </b> from {' '} <b>
                 <a href={getWikipediaLink(start)} style={{ textDecoration: 'underline', color: 'inherit' }}>
-                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} 
+                    onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                  >
                     {start}
                   </span>
                 </a> {' '} </b>
                 to {' '} <b>
                 <a href={getWikipediaLink(goal)} style={{ textDecoration: 'underline', color: 'inherit' }}>
-                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                  <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} 
+                    onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                  >
                     {goal}
                   </span>
                 </a> </b>
@@ -128,7 +132,9 @@ const BFS = () => {
                   {result.map((article, index) => (
                     <span key={index}>
                       <a href={getWikipediaLink(article)} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}>
+                      <span onMouseOver={(e) => { e.target.style.color = 'white'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = '#52769F'; }} 
+                        onMouseOut={(e) => { e.target.style.color = 'inherit'; e.target.style.textDecoration = 'underline'; e.target.style.backgroundColor = 'transparent'; }}
+                      >
                           {article}
                         </span>
                       </a>
