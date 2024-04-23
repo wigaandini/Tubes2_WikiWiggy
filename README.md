@@ -1,4 +1,4 @@
-<h1 align="center"> Tugas Besar 1 IF2211 Strategi Algoritma </h1>
+<h1 align="center"> Tugas Besar 2 IF2211 Strategi Algoritma </h1>
 <h1 align="center">  Pemanfaatan Algoritma IDS dan BFS dalam Permainan WikiRace </h1>
 
 
@@ -28,13 +28,31 @@ Features that used in this program are:
 |   NO   |  Required Program                  |                                   Reference Link                                  |
 | :----: | ---------------------------------- |-----------------------------------------------------------------------------------|
 |   1    | ChakraUI React                     | [ChakraUI](https://v2.chakra-ui.com/)
+|   2    | Go Language                        | [The Go Programming Language](https://go.dev)
+|   3    | React                              | [React](https://react.dev) 
 
 ## How to Run The Program
-1. Clone this repository by typing `git clone https://github.com/wigaandini/Tubes2_WikiWiggy.git` in the terminal.
-2. Change the directory using `cd Frontend`.
-3. If you don't have the requirements, type `npm install` in terminal.
-4. Install the ChakraUI by typing `npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion`.
-5. Compile and run the program by typing `npm run dev`.
+### Clone Repository
+1. Open terminal
+2. Clone this repository by typing `git clone https://github.com/wigaandini/Tubes2_WikiWiggy.git` in the terminal.
+### Run the Frontend
+1. Change the directory using `cd Frontend`.
+2. If you don't have the requirements, type `npm install` in terminal.
+3. Install the ChakraUI by typing `npm i @chakra-ui/react @emotion/react @emotion/styled framer-motion`.
+4. Compile and run the program by typing `npm run dev`.
+5. Open the localhost link or type `o` in the terminal.
+### Run the Backend
+1. Open a new terminal
+2. Change the directory using `cd Backend`.
+3. If you don't have the requirements, type `go get github.com/PuerkitoBio/goquery` and  `go get github.com/gin-gonic/gin` in terminal.
+4. To run BFS algorithm, type `cd bfs` then `go run ./bfs.go`.
+5. To run IDS algorithm, open new terminal then type `cd ids` then `go run ./ids.go`.
+### How to use the Website
+1. Open the home page and click BFS or IDS.
+2. Input the start article title.
+3. Input the goal article title.
+4. Click the start button and wait for the results to appear.
+
 
 
 ## Project Status
@@ -46,21 +64,44 @@ This project has been completed and can be executed.
 
 │
 ├── README.md
-├── bin/                        # Executable compiled program
 │
 │
 ├── doc/                        # Document files
-│   └── 
+│   └── WikiWiggy.pdf
 │
 └── src/                        # Source code files
     ├── Backend/                
-    │   ├── 
-    │   └── 
-    │
+    │   ├── bfs
+    │   │   ├── bfs.go
+    │   │   ├── go.mod
+    │   │   └── go.sum
+    │   └── ids
+    │       ├── ids.go
+    │       ├── go.mod
+    │       └── go.sum
     └── Frontend/                
-        ├── 
-        ├── 
-        └──
+        ├── data 
+        ├── public
+        ├── src
+        │   ├── assets           # Pictures used in the website
+        │   ├── layouts
+        │   │   ├── MobileNavigation.jsx
+        │   │   ├── NavigationBar.jsx
+        │   │   └── RootLayout.jsx
+        │   ├── pages
+        │   │   ├── BFS.jsx
+        │   │   ├── Dashboard.jsx
+        │   │   ├── HowToUse.jsx
+        │   │   ├── IDS.jsx
+        │   │   └── Profile.jsx
+        │   └── styles
+        │       └── Profile.css
+        ├── App.jsx
+        ├── main.jsx
+        ├── index.html
+        ├── package-lock.json
+        ├── package.json
+        └── vite.config.js
                                    
         
 ```
@@ -73,4 +114,3 @@ This project has been completed and can be executed.
 | 13522053 |       Erdianti Wiga Putri Andini       |
 | 13522063 |         Shazya Audrea Taufik           |
 | 10023634 |            Yudi Kurniawan              |
-
