@@ -94,6 +94,7 @@ func isValidArticleLink(link string) bool {
 		"/wiki/Category:",
 		"/wiki/Help:",
 		"/wiki/Template:",
+		"/wiki/Main_Page",
 	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(link, prefix) {
@@ -187,6 +188,7 @@ func main() {
 						for _, node := range path {
 							title := getTitle(node)
 							pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
+							fmt.Println(title)
 						}
 						endTime := time.Since(start).Milliseconds()
 						c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})

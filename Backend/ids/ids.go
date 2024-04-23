@@ -91,6 +91,7 @@ func isValidArticleLink(link string) bool {
 		"/wiki/Category:",
 		"/wiki/Help:",
 		"/wiki/Template:",
+		"/wiki/Main_Page",
 	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(link, prefix) {
