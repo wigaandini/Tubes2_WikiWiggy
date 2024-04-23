@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Container, Input, Button, Flex, Center } from '@chakra-ui/react';
+import { Box, Container, Input, Button, Flex, Center, useToast } from '@chakra-ui/react';
 import bfsImg from '../assets/bfs.png';
 
 const BFS = () => {
@@ -11,30 +11,79 @@ const BFS = () => {
   const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const toast = useToast(); 
+
+  const checkArticleExistence = async (title) => {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&titles=${encodeURIComponent(title)}&origin=*`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const page = data.query.pages;
+        const pageId = Object.keys(page)[0];
+        return pageId !== "-1";
+    } catch (error) {
+        console.error('Error checking article:', error);
+        return false;
+    }
+  };
 
   const handleSearch = async () => {
+    if (start.trim() === '' || goal.trim() === '') {
+        toast({
+            title: "Validation Error",
+            description: "Both start and goal titles are required.",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+            position: "top"
+        });
+        return;
+    }
+
+    const startExists = await checkArticleExistence(start);
+    const goalExists = await checkArticleExistence(goal);
+
+    if (!startExists || !goalExists) {
+        toast({
+            title: "Article Not Found",
+            description: `The article "${!startExists ? start : goal}" does not exist.`,
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+            position: "top"
+        });
+        return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:8080/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
-      if (response.ok) {
+        const response = await fetch(`http://localhost:8080/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
         const data = await response.json();
-        if (data.timeTaken) {
-          setResult(data.paths);
-          setExecutionTime(data.timeTaken);
-          setVisitedCount(data.visited);
-          setLength(data.length);
-        } else {
-          throw new Error('Invalid response format. Attribute is missing');
+        if (!response.ok) {
+            throw new Error(data.error || `Failed to fetch path. Status code: ${response.status}`);
         }
-      } else {
-        throw new Error('Failed to fetch path. Status code: ' + response.status);
-      }
+        if (!data.paths || data.paths.length === 0) {
+            throw new Error("No path found between the articles.");
+        }
+        setResult(data.paths);
+        setExecutionTime(data.timeTaken);
+        setVisitedCount(data.visited);
+        setLength(data.length);
     } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to fetch data. Please try again.');
+        console.error('Error:', error);
+        setError(error.message);
+        toast({
+            title: "Error",
+            description: error.message,
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+            position: "top"
+        });
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
   };
 
   const getWikipediaLink = (title) => `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
