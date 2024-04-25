@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -90,8 +91,24 @@ func isValidArticleLink(link string) bool {
 		"/wiki/File:",
 		"/wiki/Category:",
 		"/wiki/Help:",
-		"/wiki/Template:", 
+		"/wiki/Template:",
 		"/wiki/Main_Page",
+		"/wiki/Main_Page:",	
+		"/wiki/Draft:",
+        "/wiki/Module:",
+        "/wiki/MediaWiki:",
+        "/wiki/Index:",
+        "/wiki/Education_Program:",
+        "/wiki/TimedText:",
+        "/wiki/Gadget:",
+        "/wiki/Gadget_Definition:",	
+		"/wiki/Book:",
+		"/wiki/AFD:",
+		"/wiki/Namespace:",
+		"/wiki/Transwiki:",
+		"/wiki/Course:",
+		"/wiki/Thread:",
+		"/wiki/Summary:", 
 	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(link, prefix) {
@@ -185,31 +202,56 @@ func main () {
 
 		maxDepth := 0
 
-		for q.Len() != 0 {
-			currentURL := q.Front().Value.(string)
-			q.Remove(q.Front())
-			links := linkScraper(currentURL, visited)
-			for _, link := range links {
-				g.AddEdge(currentURL, link)
-				if link == goalURL {
-					path := g.IDS(startURL, goalURL, maxDepth)
-					for path == nil {
-						maxDepth++
-						path = g.IDS(startURL, goalURL, maxDepth)
-					}
-					var pathTitle []string
-					for _, node := range path {
-						title := getTitle(node)
-						pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
-					}
-					endTime := time.Since(start).Milliseconds()
-					c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
-					return
-				} 
-				q.PushBack(link)
+		var mutex sync.Mutex
+		pathFound := make(chan []string)
+
+		go func() {
+			defer close(pathFound)
+			var wg sync.WaitGroup
+
+			for q.Len() != 0 {
+				currentURL := q.Front().Value.(string)
+				q.Remove(q.Front())
+
+				links := linkScraper(currentURL, visited)
+				for _, link := range links {
+					wg.Add(1)
+					go func(link string) {
+						defer wg.Done()
+						mutex.Lock()
+						defer mutex.Unlock()
+
+						g.AddEdge(currentURL, link)
+						if link == goalURL {
+							path := g.IDS(startURL, goalURL, maxDepth)
+							for path == nil {
+								maxDepth++
+								path = g.IDS(startURL, goalURL, maxDepth)
+								if path != nil {
+									pathFound <- path
+									return
+								}
+							}
+						}
+						q.PushBack(link)
+					}(link)
+				}
+				wg.Wait()
 			}
+		}()
+
+		select {
+		case path := <-pathFound:
+			var pathTitle []string
+			for _, node := range path {
+				title := getTitle(node)
+				pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
+			}
+			endTime := time.Since(start).Milliseconds()
+			c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
+		case <-time.After(100000000 * time.Second):
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": "Request timed out"})
 		}
-		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
 	})
 	r.Run(":8081") 
 }
