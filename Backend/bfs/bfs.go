@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -95,6 +96,22 @@ func isValidArticleLink(link string) bool {
 		"/wiki/Help:",
 		"/wiki/Template:",
 		"/wiki/Main_Page",
+		"/wiki/Main_Page:",	
+		"/wiki/Draft:",
+        "/wiki/Module:",
+        "/wiki/MediaWiki:",
+        "/wiki/Index:",
+        "/wiki/Education_Program:",
+        "/wiki/TimedText:",
+        "/wiki/Gadget:",
+        "/wiki/Gadget_Definition:",	
+		"/wiki/Book:",
+		"/wiki/AFD:",
+		"/wiki/Namespace:",
+		"/wiki/Transwiki:",
+		"/wiki/Course:",
+		"/wiki/Thread:",
+		"/wiki/Summary:", 
 	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(link, prefix) {
@@ -170,7 +187,7 @@ func main() {
 		goalTitle := c.Query("goalTitle")
 
 		if startTitle == "" || goalTitle == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Start title and Goal title is required"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Start title and Goal title are required"})
 			return
 		}
 
@@ -184,32 +201,53 @@ func main() {
 		q := list.New()
 		q.PushBack(startURL)
 
-		for q.Len() != 0 {
-			currentURL := q.Front().Value.(string)
-			q.Remove(q.Front())
+		var mutex sync.Mutex
+		pathFound := make(chan []string)
 
-			links := linkScraper(currentURL, visited)
-			for _, link := range links {
-				g.AddEdge(currentURL, link)
-				if link == goalURL {
-					path := g.BFS(startURL, goalURL)
-					if path != nil {
-						var pathTitle []string
-						for _, node := range path {
-							title := getTitle(node)
-							pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
-							fmt.Println(title)
+		go func() {
+			defer close(pathFound)
+			var wg sync.WaitGroup
+
+			for q.Len() != 0 {
+				currentURL := q.Front().Value.(string)
+				q.Remove(q.Front())
+
+				links := linkScraper(currentURL, visited)
+				for _, link := range links {
+					wg.Add(1)
+					go func(link string) {
+						defer wg.Done()
+						mutex.Lock()
+						defer mutex.Unlock()
+
+						g.AddEdge(currentURL, link)
+						if link == goalURL {
+							path := g.BFS(startURL, goalURL)
+							if path != nil {
+								pathFound <- path
+								return
+							}
 						}
-						endTime := time.Since(start).Milliseconds()
-						c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
-						return
-					}
+						q.PushBack(link)
+					}(link)
 				}
-				q.PushBack(link)
+				wg.Wait()
 			}
+		}()
+
+		select {
+		case path := <-pathFound:
+			var pathTitle []string
+			for _, node := range path {
+				title := getTitle(node)
+				pathTitle = append(pathTitle, strings.ReplaceAll(title, "_", " "))
+			}
+			endTime := time.Since(start).Milliseconds()
+			c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
+		case <-time.After(100000000 * time.Second):
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": "Request timed out"})
 		}
-		c.JSON(http.StatusOK, gin.H{"paths": "", "timeTaken": time.Since(start).Milliseconds(), "visited": g.visitedCount, "length": 0})
 	})
 
-	r.Run(":8080") 
+	r.Run(":8080")
 }
