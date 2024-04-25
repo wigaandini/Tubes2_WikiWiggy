@@ -48,9 +48,22 @@ func (g *Graph) AddEdge(node1, node2 string) {
 func (g *Graph) IDS(startNode string, goalNode string, maxDepth int) []string {
 	g.visitedCount = 0
 
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
+
+
+	run := func(current string, goal string, depth int, visited map[string]bool) []string {
+		defer wg.Done()
+		mutex.Lock()
+		defer mutex.Unlock()
+		return g.DLS(current, goal, depth, visited)
+	}
+
 	for depth := 0; depth <= maxDepth; depth++ {
 		visited := make(map[string]bool)
-		result := g.DLS(startNode, goalNode, depth, visited)
+		wg.Add(1)
+		result := run(startNode, goalNode, depth, visited)
+		wg.Wait()
 		if len(result) > 0 {
 			return result
 		}
