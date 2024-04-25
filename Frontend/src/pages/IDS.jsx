@@ -58,7 +58,7 @@ const IDS = () => {
     setLoading(true);
     setError(null);
     try {
-        const response = await fetch(`http://localhost:8080/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
+        const response = await fetch(`http://localhost:8081/?startTitle=${encodeURIComponent(start)}&goalTitle=${encodeURIComponent(goal)}`);
         const data = await response.json();
         if (!response.ok) {
             throw new Error(data.error || `Failed to fetch path. Status code: ${response.status}`);
