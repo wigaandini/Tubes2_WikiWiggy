@@ -256,6 +256,13 @@ func main () {
 		start := time.Now()
 		g := NewGraph()
 
+		if startTitle == goalTitle {
+			var paths []string
+			paths = append(paths, startTitle)
+			c.JSON(http.StatusOK, gin.H{"paths": paths, "timeTaken": time.Since(start).Milliseconds(), "visited": 0, "length": 0})
+			return
+		}
+
 		startURL := convertToURL(startTitle)
 		goalURL := convertToURL(goalTitle)
 
