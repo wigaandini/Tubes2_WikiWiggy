@@ -47,21 +47,21 @@ func (g *Graph) AddEdge(node1, node2 string) {
 }
 
 // BFS
-func (g *Graph) BFS(startURL, goalURL string) []string {
+func (g *Graph) BFS(start, end string) []string {
 	visited := make(map[string]bool)
 	parent := make(map[string]string)
 	q := list.New()
 
-	visited[startURL] = true
-	q.PushBack(startURL)
+	visited[start] = true
+	q.PushBack(start)
 
 	for q.Len() != 0 {
 		currentNode := q.Front().Value.(string)
 		q.Remove(q.Front())
 
-		if currentNode == goalURL {
+		if currentNode == end {
 			path := []string{}
-			current := goalURL
+			current := end
 			for current != "" {
 				path = append([]string{current}, path...)
 				current = parent[current]
@@ -123,7 +123,6 @@ func isValidArticleLink(link string) bool {
 	return strings.HasPrefix(link, "/wiki/") && !strings.Contains(link, ":")
 }
 
-// Caching
 var linkCache map[string][]string
 
 func initLinkCache() {
