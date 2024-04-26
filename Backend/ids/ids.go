@@ -2,13 +2,15 @@ package main
 
 import (
 	"container/list"
+	"encoding/csv"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
-	"time"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -131,7 +133,55 @@ func isValidArticleLink(link string) bool {
 	return strings.HasPrefix(link, "/wiki/") && !strings.Contains(link, ":")
 }
 
+var linkCache map[string][]string
+
+func initLinkCache() {
+	linkCache = make(map[string][]string)
+	file, err := os.Open("cached-ids.csv")
+	if err != nil {
+		log.Println("No existing cache file.")
+		return
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		log.Fatal("Failed to read cache file: ", err)
+	}
+
+	for _, record := range records {
+		if len(record) >= 2 {
+			url := record[0]
+			links := record[1:]
+			linkCache[url] = links
+		}
+	}
+}
+
+func saveLinkCache() {
+	file, err := os.Create("cached-ids.csv")
+	if err != nil {
+		log.Fatal("Failed to create cache file: ", err)
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for url, links := range linkCache {
+		record := append([]string{url}, links...)
+		if err := writer.Write(record); err != nil {
+			log.Fatal("Failed to write to cache file: ", err)
+		}
+	}
+}
+
 func linkScraper(url string, visited map[string]bool) []string {
+	if links, ok := linkCache[url]; ok {
+		return links
+	}
+
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		log.Fatal(err)
@@ -142,25 +192,25 @@ func linkScraper(url string, visited map[string]bool) []string {
 	doc.Find("body a").Each(func(index int, item *goquery.Selection) {
 		style, exists := item.Attr("style")
 		if exists && (strings.Contains(style, "display: none") || strings.Contains(style, "visibility: hidden")) {
-			return 
+			return
 		}
 
 		if _, hiddenExists := item.Attr("hidden"); hiddenExists {
-			return 
+			return
 		}
 
 		link, exists := item.Attr("href")
 		if !exists || !isValidArticleLink(link) || visited[link] {
-			return 
+			return
 		}
 
 		visited[link] = true
 		uniqueLinks = append(uniqueLinks, "https://en.wikipedia.org"+link)
 	})
 
+	linkCache[url] = uniqueLinks
 	return uniqueLinks
 }
-
 
 func getTitle(urlString string) (string) {
 	parsedURL, err := url.Parse(urlString)
@@ -190,6 +240,7 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func main () {
+	initLinkCache()
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
@@ -262,9 +313,10 @@ func main () {
 			}
 			endTime := time.Since(start).Milliseconds()
 			c.JSON(http.StatusOK, gin.H{"paths": pathTitle, "timeTaken": endTime, "visited": g.visitedCount, "length": len(pathTitle) - 1})
-		case <-time.After(100000000 * time.Second):
+		case <-time.After(1000000 * time.Second):
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": "Request timed out"})
 		}
+		saveLinkCache()
 	})
 	r.Run(":8081") 
 }
