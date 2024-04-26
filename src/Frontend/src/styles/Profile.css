@@ -1,0 +1,66 @@
+@keyframes shake1 {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-5deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+    75% {
+      transform: rotate(5deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+  }
+  
+@keyframes shake2 {
+    0% {
+        transform: rotate(5deg);
+    }
+    25% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(5deg);
+    }
+  }
+  
+@keyframes shake3 {
+    0% {
+        transform: rotate(-5deg);
+    }
+    25% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+    75% {
+        transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(-5deg);
+    }
+  }
+  
+.shake1-animation {
+    animation: shake1 1.2s infinite;
+  }
+  
+.shake2-animation {
+    animation: shake2 1.2s infinite;
+  }
+  
+.shake3-animation {
+    animation: shake3 1.2s infinite;
+  }
+  
