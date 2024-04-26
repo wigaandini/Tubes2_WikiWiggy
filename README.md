@@ -1,6 +1,7 @@
 <h1 align="center"> Tugas Besar 2 IF2211 Strategi Algoritma </h1>
 <h1 align="center">  Pemanfaatan Algoritma IDS dan BFS dalam Permainan WikiRace </h1>
 
+![WikiWiggy](img/WikiWiggy.jpg)
 
 ## Table of Contents
 1. [General Information](#general-information)
@@ -35,6 +36,7 @@ Features that used in this program are:
 ### Clone Repository
 1. Open terminal
 2. Clone this repository by typing `git clone https://github.com/wigaandini/Tubes2_WikiWiggy.git` in the terminal.
+3. Change the directory using `cd src`.
 ### Run the Frontend
 1. Change the directory using `cd Frontend`.
 2. If you don't have the requirements, type `npm install` in terminal.
