@@ -71,7 +71,6 @@ Features that used in this program are:
 
 
 ## How to Run The Program (Using Docker)
-### Clone Repository
 1. Open terminal
 2. Clone this repository by typing `git clone https://github.com/wigaandini/Tubes2_WikiWiggy.git` in the terminal.
 3. To run the docker, open the `Docker Desktop` application.
