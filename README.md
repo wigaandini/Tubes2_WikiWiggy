@@ -33,7 +33,7 @@ Features that used in this program are:
 | NO  | Algorithm            | Description                                                          |
 |:---:|----------------------|----------------------------------------------------------------------|
 | 1   | BFS                  | WikiRace searching the path using Breadth First Search algorithm     |
-| 2   | IDS                  | WikiRace searching the path using Iterative Depth Search algorithm   |
+| 2   | IDS                  | WikiRace searching the path using Iterative Deepening Search algorithm   |
 
 
 ## Requirements Program
