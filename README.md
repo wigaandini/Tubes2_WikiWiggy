@@ -12,6 +12,7 @@
 6. [Project Status](#project-status)
 7. [Project Structure](#project-structure)
 8. [Screenshots](#screenshots)
+9. [Bonus Video](#bonus-video)
 
 
 ## General Information
