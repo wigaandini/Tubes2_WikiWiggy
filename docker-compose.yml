@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  bfs:
+    build: ./src/Backend/bfs
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/Backend/bfs:/app
+    restart: unless-stopped
+
+  ids:
+    build: ./src/Backend/ids
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src/Backend/ids:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./src/Frontend
+    ports:
+      - "5173:80"
+    restart: unless-stopped

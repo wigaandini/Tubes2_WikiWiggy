@@ -11,10 +11,11 @@
 5. [How to Run The Program](#how-to-run-the-program)
 6. [Project Status](#project-status)
 7. [Project Structure](#project-structure)
+8. [Screenshots](#screenshots)
 
 
 ## General Information
-WikiRace or Wiki Game is a game involving Wikipedia, a free online encyclopedia managed by various volunteers worldwide, where players start at a Wikipedia article and must navigate through other articles on Wikipedia (by clicking on links within each) to reach another pre-determined article within the shortest time or with the fewest clicks (articles).
+WikiRace or Wiki Game is a game involving Wikipedia, a free online encyclopedia managed by various volunteers worldwide, where players start at a Wikipedia article and must navigate through other articles on Wikipedia (by clicking on links within each) to reach another pre-determined article within the shortest time or with the fewest clicks (articles). This program uses 2 types of algorithm, Breadth First Search (BFS) and Iterative Deepening Search (IDS). BFS is a searching algorithm that searches a graph based on its level. IDS is a searching algorithm that will search the graph using Depth Limited Search and will constantly increase the depth limit until the goal is found.
 
 
 ## Contributors
@@ -93,6 +94,17 @@ This project has been completed and can be executed.
 │
 ├── README.md
 │
+├── docker-compose.yml
+│
+├── img
+|   ├── 1.png
+|   ├── 2.png
+|   ├── 3.png
+|   ├── 4.png
+|   ├── 5.png
+|   ├── 6.png
+|   ├── 7.png
+│   └── WikiWiggy.jpg
 │
 ├── doc/                        # Document files
 │   └── WikiWiggy.pdf
@@ -134,3 +146,15 @@ This project has been completed and can be executed.
         
 ```
 
+## Screenshots
+![1](img/1.png)
+![2](img/2.png)
+![3](img/3.png)
+![4](img/4.png)
+![5](img/5.png)
+![6](img/6.png)
+![7](img/7.png)
+
+
+## Bonus Video
+https://youtu.be/p_GyjQVEhv0
